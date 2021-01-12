@@ -1,4 +1,5 @@
 import random
+import _sqlite3
 
 
 class Banking:
@@ -32,9 +33,6 @@ class Banking:
         print(f"\nYour card has been created")
 
         print("Your card number: ")
-        self.card_number = (str(400000)
-                            + '{:09d}'.format(random.randrange(000000000, 999999999))
-                            + str(random.randint(0, 9)))
         Banking.luhn_check(self)
         print(self.card_number)
 
@@ -77,8 +75,13 @@ class Banking:
             print(f"\nBye!")
             exit()
 
+    # creates a cc number based on luhn algorithm parameters
     def luhn_check(self):
         card_list = []
+
+        self.card_number = (str(400000)
+                            + '{:09d}'.format(random.randrange(000000000, 999999999))
+                            + str(random.randint(0, 9)))
 
         # creates a integer list out of the numbers within the credit card
         for x in self.card_number:
@@ -87,12 +90,11 @@ class Banking:
         # stores the last digit of the original cc number
         # into a variable & removes from the cc for calculations
         checksum = card_list.pop(-1)
-        card_list.pop(-1)
 
         # multiplies each odd index of the credit card by 2
         for i in range(len(card_list)):
             if i % 2 == 0:
-                card_list[i] *= 2
+                card_list[i] = card_list[i] * 2
 
         # subtracts 9 from all digits greater than 9
         for j in range(len(card_list)):
@@ -100,9 +102,7 @@ class Banking:
                 card_list[j] -= 9
 
         if (sum(card_list) + checksum) % 10 != 0:
-            Banking.create_card(self)
-
-        print(card_list)
+            Banking.luhn_check(self)
 
 
 Banking()
